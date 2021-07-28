@@ -22,7 +22,9 @@ void Game::update()
 
     updateMousePos();
 
+    //status/movement of rover
     updateRover();
+    moveRover();
 
 };
 
@@ -138,46 +140,6 @@ void Game::updateRover()
         }
     }
 
-    if(move)
-    {
-        //current coords
-        int currentX = rover.getCurrentX();
-        int currentY = rover.getCurrentY();
-        //destination
-        int roverX = grid[moveX].at(moveY).getX() - (roverSize / 2);
-        int roverY = (grid[moveX].at(moveY).getY() + (grid[moveX].at(moveY).getHeight()/3)) - (roverSize);
-
-        if(roverX < currentX)
-        {
-            currentX -= 1;
-            rover.rectPosition(currentX, currentY);
-        }
-
-        if(roverY < currentY)
-        {
-            currentY -= 1;
-            rover.rectPosition(currentX, currentY);
-        }
-
-        if(roverX > currentX)
-        {
-            currentX += 1;
-            rover.rectPosition(currentX, currentY);
-        }
-
-        if(roverY > currentY)
-        {
-            currentY += 1;
-            rover.rectPosition(currentX, currentY);
-        }
-
-        else if (currentX == roverX && currentY == roverY)
-        {
-            move = false;
-        }
-
-    }
-
 };
 
 void Game::renderGrid()
@@ -211,7 +173,7 @@ void Game::initVariables()
     move = false;
     moveX = 0;
     moveY = 0;
-    tileTexture.loadFromFile("textures/marsTerrain.png");
+    tileTexture.loadFromFile("textures/marsTerrain2.png");
     
 
 };
@@ -282,4 +244,50 @@ void Game::initRover()
     int rovery = (grid[2].at(2).getY() + (grid[2].at(2).getHeight()/3)) - (roverSize);
 
     rover.initRect(roverx, rovery, roverSize);
+};
+
+
+void Game::moveRover()
+{
+
+    if(move)
+    {
+        //current coords
+        int currentX = rover.getCurrentX();
+        int currentY = rover.getCurrentY();
+        //destination
+        int roverX = grid[moveX].at(moveY).getX() - (roverSize / 2);
+        int roverY = (grid[moveX].at(moveY).getY() + (grid[moveX].at(moveY).getHeight()/3)) - (roverSize);
+
+        if(roverX < currentX)
+        {
+            currentX -= 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        if(roverY < currentY)
+        {
+            currentY -= 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        if(roverX > currentX)
+        {
+            currentX += 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        if(roverY > currentY)
+        {
+            currentY += 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        else if (currentX == roverX && currentY == roverY)
+        {
+            move = false;
+        }
+
+    }
+
 };

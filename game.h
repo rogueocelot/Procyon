@@ -34,6 +34,8 @@ class Game
         void renderGrid();
         void renderRover();
 
+        void moveRover();
+
         //accessors
         const bool getStatus() const {return this->window->isOpen();}
     
@@ -55,6 +57,7 @@ class Game
 
 
         //game objects
+        sf::ConvexShape boundsRect;
         vector<vector<Tile>> grid;
         Rover rover;
         sf::Texture tileTexture;
@@ -68,6 +71,7 @@ class Game
         void initWindow();
         void initGrid();
         void initRover();
+
 };
 
 #endif
