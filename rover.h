@@ -18,6 +18,9 @@ class Rover
         int getGridX(){return gridX;}
         int getGridY(){return gridY;}
 
+        int getCurrentX(){return currentX;}
+        int getCurrentY(){return currentY;}
+
         void initRect(int x, int y, int size);
         void rectPosition(int x, int y);
 
@@ -26,8 +29,12 @@ class Rover
         sf::Vector2f rectSize;
         int height;
         int width;
+
         int gridX;
         int gridY;
+
+        int currentX;
+        int currentY;
 
 
 };

@@ -18,11 +18,18 @@ void Rover::initRect(int x, int y, int size)
     rect.setPosition(x, y);
     rect.setSize(rectSize);
     rect.setFillColor(sf::Color(250, 150, 100));
+    gridX = 2;
+    gridY = 2;
 
+    currentX = x;
+    currentY = y;
 
 };
 
 void Rover::rectPosition(int x, int y)
 {
     rect.setPosition(x, y);
+
+    currentX = x;
+    currentY = y;
 };

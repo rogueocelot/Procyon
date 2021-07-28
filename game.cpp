@@ -104,9 +104,6 @@ void Game::updateMousePos()
 
 void Game::updateRover()
 {
-    int moveX = 0;
-    int moveY = 0;
-    bool move = false;
 
     //this is all a mess
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -125,7 +122,11 @@ void Game::updateRover()
                 if(mouseX > x - (height/4) && mouseX < x + (height/4) && mouseY > y + (height/8) && mouseY < y + ((height/4) + (height/8)))
                 {
                     //selected grid changes color
+                    //saves selected tile
+                    //saves coords
                     grid[i][j].editColor();
+                    moveX = i;
+                    moveY = j;
                     move = true;
                 }
                 else
@@ -135,6 +136,46 @@ void Game::updateRover()
                 }
             }
         }
+    }
+
+    if(move)
+    {
+        //current coords
+        int currentX = rover.getCurrentX();
+        int currentY = rover.getCurrentY();
+        //destination
+        int roverX = grid[moveX].at(moveY).getX() - (roverSize / 2);
+        int roverY = (grid[moveX].at(moveY).getY() + (grid[moveX].at(moveY).getHeight()/3)) - (roverSize);
+
+        if(roverX < currentX)
+        {
+            currentX -= 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        if(roverY < currentY)
+        {
+            currentY -= 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        if(roverX > currentX)
+        {
+            currentX += 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        if(roverY > currentY)
+        {
+            currentY += 1;
+            rover.rectPosition(currentX, currentY);
+        }
+
+        else if (currentX == roverX && currentY == roverY)
+        {
+            move = false;
+        }
+
     }
 
 };
@@ -167,7 +208,9 @@ void Game::initVariables()
     mouseDelta = 0;
     zoom = 1.0;
     roverSize = 50;
-
+    move = false;
+    moveX = 0;
+    moveY = 0;
     
 
 };
