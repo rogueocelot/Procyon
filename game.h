@@ -57,6 +57,7 @@ class Game
         //game objects
         vector<vector<Tile>> grid;
         Rover rover;
+        sf::Texture tileTexture;
 
         //mouse position
         sf::Vector2i mouseWindow;

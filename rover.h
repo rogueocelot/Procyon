@@ -27,6 +27,7 @@ class Rover
     private:
         sf::RectangleShape rect;
         sf::Vector2f rectSize;
+        sf::Texture texture;
         int height;
         int width;
 

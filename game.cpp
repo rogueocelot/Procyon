@@ -32,7 +32,7 @@ void Game::render()
 {
     //r, g, b, alpha (transparency)
     //clears old frame
-    window->clear(sf::Color(100, 75, 178, 255));
+    window->clear(sf::Color(16, 16, 16, 255));
 
     window->setView(view);
 
@@ -211,6 +211,7 @@ void Game::initVariables()
     move = false;
     moveX = 0;
     moveY = 0;
+    tileTexture.loadFromFile("textures/marsTerrain.png");
     
 
 };
@@ -263,7 +264,16 @@ void Game::initGrid()
         starty = starty + (height/4) + 2;
     }
 
+
+    for (int i = 0; i < grid.size(); i++)
+    {
+        for (int j = 0; j < grid[i].size(); j++)
+        {
+            grid[i][j].initTexture(tileTexture);
+        }
+    }
 };
+
 
 void Game::initRover()
 {

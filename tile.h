@@ -20,11 +20,13 @@ class Tile
         int getY(){return y;}
 
         void initTile(int x, int y, int height);
+        void initTexture(sf::Texture &texture);
         void editColor();
         void resetColor();
 
     private:
         sf::ConvexShape diamond;
+        sf::Texture texture;
         int x;
         int y;
         int height;

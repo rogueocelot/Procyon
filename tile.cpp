@@ -15,6 +15,9 @@ Tile::Tile(int x, int y, int height)
 
 void Tile::initTile(int x, int y, int height)
 {
+
+
+    //make grid tile
     diamond.setPointCount(4);
     diamond.setPoint(0, sf::Vector2f(x, y));
     diamond.setPoint(1, sf::Vector2f(x + (height / 2), y + (height/4)));
@@ -24,6 +27,9 @@ void Tile::initTile(int x, int y, int height)
     this->height = height;
     this->x = x;
     this->y = y;
+
+    //set texture
+
 
 };
 
@@ -35,4 +41,9 @@ void Tile::editColor()
 void Tile::resetColor()
 {
     diamond.setFillColor(sf::Color(255, 255, 255));
+};
+
+void Tile::initTexture(sf::Texture &texture)
+{
+    diamond.setTexture(&texture);
 };
