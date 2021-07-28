@@ -8,6 +8,9 @@ Tile::Tile()
 Tile::Tile(int x, int y, int height)
 {
     initTile(x, y, height);
+    this->height = height;
+    this->x = x;
+    this->y = y;
 };
 
 void Tile::initTile(int x, int y, int height)
@@ -18,11 +21,18 @@ void Tile::initTile(int x, int y, int height)
     diamond.setPoint(2, sf::Vector2f(x, y + height/2));
     diamond.setPoint(3, sf::Vector2f(x - (height / 2), y + (height/4)));
 
-    /*
-    diamond.setPointCount(4);
-    diamond.setPoint(0, sf::Vector2f(500, 500));
-    diamond.setPoint(1, sf::Vector2f(550 , 550));
-    diamond.setPoint(2, sf::Vector2f(500 , 600));
-    diamond.setPoint(3, sf::Vector2f(450 , 550));
-    */
-}
+    this->height = height;
+    this->x = x;
+    this->y = y;
+
+};
+
+void Tile::editColor()
+{
+    diamond.setFillColor(sf::Color(200, 200, 0));
+};
+
+void Tile::resetColor()
+{
+    diamond.setFillColor(sf::Color(255, 255, 255));
+};

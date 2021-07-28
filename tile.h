@@ -15,11 +15,19 @@ class Tile
         Tile(int x, int y, int height);
 
         sf::ConvexShape getGrid(){return diamond;}
+        int getHeight(){return height;}
+        int getX(){return x;}
+        int getY(){return y;}
 
         void initTile(int x, int y, int height);
+        void editColor();
+        void resetColor();
 
     private:
         sf::ConvexShape diamond;
+        int x;
+        int y;
+        int height;
         bool obstruct;
         bool visObstruct;
 
