@@ -51,9 +51,13 @@ class Game
         int mouseDelta;
         float zoom;
         int roverSize;
+
+        //movement variables
         bool move;
         int moveX;
         int moveY;
+        int nextX;
+        int nextY;
 
 
         //game objects

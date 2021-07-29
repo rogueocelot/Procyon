@@ -15,6 +15,7 @@ class Rover
         Rover(int height, int width);
 
         sf::RectangleShape getRect(){return rect;}
+
         int getGridX(){return gridX;}
         int getGridY(){return gridY;}
 
@@ -23,6 +24,7 @@ class Rover
 
         void initRect(int x, int y, int size);
         void rectPosition(int x, int y);
+        void gridPosition(int x, int y);
 
     private:
         sf::RectangleShape rect;

@@ -126,10 +126,13 @@ void Game::updateRover()
                     //selected grid changes color
                     //saves selected tile
                     //saves coords
-                    grid[i][j].editColor();
-                    moveX = i;
-                    moveY = j;
-                    move = true;
+                    if(move == false) 
+                    {
+                        grid[i][j].editColor();
+                        moveX = i;
+                        moveY = j;
+                        move = true;
+                    }
                 }
                 else
                 {
@@ -170,9 +173,14 @@ void Game::initVariables()
     mouseDelta = 0;
     zoom = 1.0;
     roverSize = 50;
+
     move = false;
     moveX = 0;
     moveY = 0;
+
+    int nextX = 0;
+    int nextY = 0;
+
     tileTexture.loadFromFile("textures/marsTerrain2.png");
     
 
@@ -252,40 +260,99 @@ void Game::moveRover()
 
     if(move)
     {
+        
         //current coords
         int currentX = rover.getCurrentX();
         int currentY = rover.getCurrentY();
-        //destination
+
+        //current tile
+        int roverGridx = rover.getGridX();
+        int roverGridy = rover.getGridY();
+
+        //next grid tile to move to
+        int nextGridx = roverGridx;
+        int nextGridy = roverGridy;
+
+        //end destination
         int roverX = grid[moveX].at(moveY).getX() - (roverSize / 2);
         int roverY = (grid[moveX].at(moveY).getY() + (grid[moveX].at(moveY).getHeight()/3)) - (roverSize);
-
-        if(roverX < currentX)
+        
+        //next destination
+        //moves in 1 tile increments
+        if (moveX != roverGridx)
         {
-            currentX -= 1;
-            rover.rectPosition(currentX, currentY);
+            if(moveX < roverGridx)
+            {
+                nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
+                nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                nextGridx = roverGridx - 1;
+            }
+            else if(moveX > roverGridx)
+            {
+                nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
+                nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                nextGridx = roverGridx + 1;
+            }
         }
 
-        if(roverY < currentY)
+        else if (moveY != roverGridy)
+        {
+            if(moveY < roverGridy)
+            {
+                nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
+                nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                nextGridy = roverGridy - 1;
+            }
+            else if(moveY > roverGridy)
+            {
+                nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
+                nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                nextGridy = roverGridy + 1;
+            }
+        }
+
+
+        //movement
+        if(nextX < currentX)
+        {
+            currentX -= 2;
+            rover.rectPosition(currentX, currentY - 200);
+        }
+
+        if(nextY < currentY)
         {
             currentY -= 1;
             rover.rectPosition(currentX, currentY);
         }
 
-        if(roverX > currentX)
+        if(nextX > currentX)
         {
-            currentX += 1;
+            currentX += 2;
             rover.rectPosition(currentX, currentY);
         }
 
-        if(roverY > currentY)
+        if(nextY > currentY)
         {
             currentY += 1;
             rover.rectPosition(currentX, currentY);
         }
 
-        else if (currentX == roverX && currentY == roverY)
+        //after it moves one tile
+        if (currentX == nextX && currentY == nextY)
         {
+            //set what grid square its on
+            rover.gridPosition(nextGridx, nextGridy);
+        }
+
+        //after it reaches destination
+        if (currentX == roverX && currentY == roverY)
+        {
+            //stop moving
             move = false;
+            //set what grid square its on
+            rover.gridPosition(moveX, moveY);
+            //centers the view on the rover
+            //view.setCenter(sf::Vector2f(currentX, currentY));
         }
 
     }

@@ -42,3 +42,9 @@ void Rover::rectPosition(int x, int y)
     currentX = x;
     currentY = y;
 };
+
+void Rover::gridPosition(int x, int y)
+{
+    gridX = x;
+    gridY = y;
+};
