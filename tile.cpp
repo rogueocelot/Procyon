@@ -11,6 +11,7 @@ Tile::Tile(int x, int y, int height)
     this->height = height;
     this->x = x;
     this->y = y;
+    obstruct = false;
 };
 
 void Tile::initTile(int x, int y, int height)
@@ -28,7 +29,7 @@ void Tile::initTile(int x, int y, int height)
     this->x = x;
     this->y = y;
 
-    //set texture
+    obstruct = false;
 
 
 };

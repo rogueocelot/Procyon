@@ -58,6 +58,7 @@ class Game
         int moveY;
         int nextX;
         int nextY;
+        bool skip;
 
 
         //game objects

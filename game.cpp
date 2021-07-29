@@ -138,6 +138,8 @@ void Game::updateRover()
                 {
                     //other squares change back
                     grid[i][j].resetColor();
+                    //for testing
+                    //grid[2][3].editColor();
                 }
             }
         }
@@ -177,6 +179,7 @@ void Game::initVariables()
     move = false;
     moveX = 0;
     moveY = 0;
+    skip = false;
 
     int nextX = 0;
     int nextY = 0;
@@ -227,6 +230,7 @@ void Game::initGrid()
             tempVec.push_back(tempTile);
             x = x - (height/2) - 2;
             y = y + (height/4) + 2;
+
         }
         grid.push_back(tempVec);
         tempVec.clear();
@@ -242,6 +246,10 @@ void Game::initGrid()
             grid[i][j].initTexture(tileTexture);
         }
     }
+
+    //test stuff
+    //grid[2][3].setObstruct(true);
+    //grid[2][3].editColor();
 };
 
 
@@ -259,8 +267,7 @@ void Game::moveRover()
 {
 
     if(move)
-    {
-        
+    {   
         //current coords
         int currentX = rover.getCurrentX();
         int currentY = rover.getCurrentY();
@@ -279,36 +286,78 @@ void Game::moveRover()
         
         //next destination
         //moves in 1 tile increments
-        if (moveX != roverGridx)
+        if (moveX != roverGridx && skip == false)
         {
-            if(moveX < roverGridx)
+            if(moveX < roverGridx && !grid[roverGridx - 1][roverGridy].getObstruct())
             {
                 nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridx = roverGridx - 1;
             }
-            else if(moveX > roverGridx)
+
+            else if(moveX > roverGridx && !grid[roverGridx + 1][roverGridy].getObstruct())
             {
                 nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridx = roverGridx + 1;
             }
+
+            //force the rover to change y if x is blocked
+            else{
+                if(!grid[roverGridx][roverGridy - 1].getObstruct())
+                {
+                    nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridy = roverGridy - 1;
+                }
+                else if(!grid[roverGridx][roverGridy + 1].getObstruct())
+                {
+                    nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridy = roverGridy + 1;
+                }
+            }
         }
 
         else if (moveY != roverGridy)
         {
-            if(moveY < roverGridy)
+            if(moveY < roverGridy && !grid[roverGridx][roverGridy - 1].getObstruct())
             {
                 nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridy = roverGridy - 1;
             }
-            else if(moveY > roverGridy)
+            else if(moveY > roverGridy && !grid[roverGridx][roverGridy + 1].getObstruct())
             {
                 nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridy = roverGridy + 1;
             }
+
+            //force rover to change x if y is blocked
+            //have to use skip to skip the x checking until correct y
+            else{
+                if(!grid[roverGridx - 1][roverGridy].getObstruct())
+                {
+                    nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridx = roverGridx - 1;
+                    skip = true;
+                }
+                else if(!grid[roverGridx + 1][roverGridy].getObstruct())
+                {
+                    nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridx = roverGridx + 1;
+                    skip = true;
+                }
+            }
+        }
+
+        //can check x again
+        else if(moveY == roverGridy)
+        {
+            skip = false;
         }
 
 
@@ -351,6 +400,7 @@ void Game::moveRover()
             move = false;
             //set what grid square its on
             rover.gridPosition(moveX, moveY);
+            grid[moveX][moveY].resetColor();
             //centers the view on the rover
             //view.setCenter(sf::Vector2f(currentX, currentY));
         }
