@@ -162,6 +162,7 @@ void Game::renderGrid()
 
 void Game::renderRover()
 {
+    rover.setTexture(roverTexture, direction);
     window->draw(rover.getRect());
 }
 
@@ -180,11 +181,13 @@ void Game::initVariables()
     moveX = 0;
     moveY = 0;
     skip = false;
+    direction = 'n';
 
     int nextX = 0;
     int nextY = 0;
 
     tileTexture.loadFromFile("textures/marsTerrain2.png");
+    roverTexture.loadFromFile("textures/rover.png");
     
 
 };
@@ -260,6 +263,7 @@ void Game::initRover()
     int rovery = (grid[2].at(2).getY() + (grid[2].at(2).getHeight()/3)) - (roverSize);
 
     rover.initRect(roverx, rovery, roverSize);
+    rover.setTexture(roverTexture, direction);
 };
 
 
@@ -293,6 +297,7 @@ void Game::moveRover()
                 nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridx = roverGridx - 1;
+                direction = 'w';
             }
 
             else if(moveX > roverGridx && !grid[roverGridx + 1][roverGridy].getObstruct())
@@ -300,6 +305,7 @@ void Game::moveRover()
                 nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridx = roverGridx + 1;
+                direction = 'e';
             }
 
             //force the rover to change y if x is blocked
@@ -309,12 +315,14 @@ void Game::moveRover()
                     nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
                     nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                     nextGridy = roverGridy - 1;
+                    direction = 'n';
                 }
                 else if(!grid[roverGridx][roverGridy + 1].getObstruct())
                 {
                     nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
                     nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                     nextGridy = roverGridy + 1;
+                    direction = 's';
                 }
             }
         }
@@ -326,12 +334,14 @@ void Game::moveRover()
                 nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridy = roverGridy - 1;
+                direction = 'n';
             }
             else if(moveY > roverGridy && !grid[roverGridx][roverGridy + 1].getObstruct())
             {
                 nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
                 nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                 nextGridy = roverGridy + 1;
+                direction = 's';
             }
 
             //force rover to change x if y is blocked
@@ -343,6 +353,7 @@ void Game::moveRover()
                     nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                     nextGridx = roverGridx - 1;
                     skip = true;
+                    direction = 'w';
                 }
                 else if(!grid[roverGridx + 1][roverGridy].getObstruct())
                 {
@@ -350,6 +361,7 @@ void Game::moveRover()
                     nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
                     nextGridx = roverGridx + 1;
                     skip = true;
+                    direction = 'e';
                 }
             }
         }

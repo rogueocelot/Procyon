@@ -59,6 +59,7 @@ class Game
         int nextX;
         int nextY;
         bool skip;
+        char direction;
 
 
         //game objects
@@ -66,6 +67,7 @@ class Game
         vector<vector<Tile>> grid;
         Rover rover;
         sf::Texture tileTexture;
+        sf::Texture roverTexture;
 
         //mouse position
         sf::Vector2i mouseWindow;

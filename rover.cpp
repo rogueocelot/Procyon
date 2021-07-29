@@ -48,3 +48,25 @@ void Rover::gridPosition(int x, int y)
     gridX = x;
     gridY = y;
 };
+
+void Rover::setTexture(sf::Texture &texture, char direction)
+{
+    rect.setTexture(&texture);
+
+    if (direction == 'n')
+    {
+        rect.setTextureRect(sf::IntRect(0, 0, 50, 50));
+    }
+    else if (direction == 'e')
+    {
+        rect.setTextureRect(sf::IntRect(102, 0, 50, 50));
+    }
+    else if (direction == 's')
+    {
+        rect.setTextureRect(sf::IntRect(161, 0, 50, 50));
+    }
+    else if (direction == 'w')
+    {
+        rect.setTextureRect(sf::IntRect(52, 0, 50, 50));
+    }
+};
