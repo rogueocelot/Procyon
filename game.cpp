@@ -57,12 +57,19 @@ void Game::pollEvents()
             case sf::Event::Closed:
                 window->close();
                 break;
+            case sf::Event::GainedFocus:
+                focus = true;
+                break;
+            case sf::Event::LostFocus:
+                focus = false;
+                break;
+            /*
             case sf::Event::KeyPressed:
                 if(event.key.code == sf::Keyboard::Escape)
                 {
                     window->close();
                     break;
-                }
+                }*/
             /*
             case sf::Event::MouseWheelMoved:
                 mouseDelta = event.mouseWheel.delta;
@@ -113,33 +120,37 @@ void Game::updateRover()
         int mouseX = mousePosition.x;
         int mouseY = mousePosition.y;
 
-        //check to see if a grid square was clicked
-        for (int i = 0; i < grid.size(); i++)
+        if(focus)
         {
-            for (int j = 0; j < grid[i].size(); j++)
+
+            //check to see if a grid square was clicked
+            for (int i = 0; i < grid.size(); i++)
             {
-                int x = grid[i][j].getX();
-                int y = grid[i][j].getY();
-                int height = grid[i][j].getHeight();
-                if(mouseX > x - (height/4) && mouseX < x + (height/4) && mouseY > y + (height/8) && mouseY < y + ((height/4) + (height/8)))
+                for (int j = 0; j < grid[i].size(); j++)
                 {
-                    //selected grid changes color
-                    //saves selected tile
-                    //saves coords
-                    if(move == false) 
+                    int x = grid[i][j].getX();
+                    int y = grid[i][j].getY();
+                    int height = grid[i][j].getHeight();
+                    if(mouseX > x - (height/4) && mouseX < x + (height/4) && mouseY > y + (height/8) && mouseY < y + ((height/4) + (height/8)))
                     {
-                        grid[i][j].editColor();
-                        moveX = i;
-                        moveY = j;
-                        move = true;
+                        //selected grid changes color
+                        //saves selected tile
+                        //saves coords
+                        if(move == false) 
+                        {
+                            grid[i][j].editColor();
+                            moveX = i;
+                            moveY = j;
+                            move = true;
+                        }
                     }
-                }
-                else
-                {
-                    //other squares change back
-                    grid[i][j].resetColor();
-                    //for testing
-                    //grid[2][3].editColor();
+                    else
+                    {
+                        //other squares change back
+                        grid[i][j].resetColor();
+                        //for testing
+                        //grid[2][3].editColor();
+                    }
                 }
             }
         }
@@ -154,6 +165,11 @@ void Game::renderGrid()
         for (int j = 0; j < grid[i].size(); j++)
         {
             window->draw(grid[i].at(j).getGrid());
+            //draw rocks
+            if(grid[i][j].getRocks() == true)
+            {
+                window->draw(grid[i][j].getRockShape());
+            }
         }
     }
 
@@ -162,7 +178,7 @@ void Game::renderGrid()
 
 void Game::renderRover()
 {
-    rover.setTexture(roverTexture, direction);
+    rover.setText(roverTexture, direction);
     window->draw(rover.getRect());
 }
 
@@ -176,6 +192,7 @@ void Game::initVariables()
     mouseDelta = 0;
     zoom = 1.0;
     roverSize = 50;
+    terrainSize = 50;
 
     move = false;
     moveX = 0;
@@ -188,7 +205,8 @@ void Game::initVariables()
 
     tileTexture.loadFromFile("textures/marsTerrain2.png");
     roverTexture.loadFromFile("textures/rover.png");
-    
+    organicTexture.loadFromFile("textures/organic.png");
+    rockTexture.loadFromFile("textures/marsRocks2.png");
 
 };
 
@@ -219,15 +237,17 @@ void Game::initGrid()
     int starty = 100;
     int height = 100;
 
+    int tileNum = 50;
+
     int x;
     int y;
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < tileNum; i++)
     {
         x = startx;
         y = starty;
 
-        for (int j = 0; j < 5; j++)
+        for (int j = 0; j < tileNum; j++)
         {
             tempTile.initTile(x, y, height);
             tempVec.push_back(tempTile);
@@ -247,6 +267,11 @@ void Game::initGrid()
         for (int j = 0; j < grid[i].size(); j++)
         {
             grid[i][j].initTexture(tileTexture);
+            //randomly places rocks and organic material, but not on starting square
+            if(i != 2 && j != 2 && i != 0 && j != 0)
+            {
+                grid[i][j].setRandom(organicTexture, rockTexture);
+            }
         }
     }
 
@@ -263,8 +288,9 @@ void Game::initRover()
     int rovery = (grid[2].at(2).getY() + (grid[2].at(2).getHeight()/3)) - (roverSize);
 
     rover.initRect(roverx, rovery, roverSize);
-    rover.setTexture(roverTexture, direction);
+    rover.setText(roverTexture, direction);
 };
+
 
 
 void Game::moveRover()
@@ -324,6 +350,24 @@ void Game::moveRover()
                     nextGridy = roverGridy + 1;
                     direction = 's';
                 }
+                /*
+                //force it to back up if this doesnt work
+                else if(!grid[roverGridx - 1][roverGridy].getObstruct())
+                {
+                    nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridx = roverGridx - 1;
+                    direction = 'w';
+                }
+
+                else if(!grid[roverGridx + 1][roverGridy].getObstruct())
+                {
+                    nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridx = roverGridx + 1;
+                    direction = 'e';
+                }
+                */
             }
         }
 
@@ -363,6 +407,23 @@ void Game::moveRover()
                     skip = true;
                     direction = 'e';
                 }
+                /*
+                //force it to back up
+                if(!grid[roverGridx][roverGridy - 1].getObstruct())
+                {
+                    nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridy = roverGridy - 1;
+                    direction = 'n';
+                }
+                else if(!grid[roverGridx][roverGridy + 1].getObstruct())
+                {
+                    nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
+                    nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
+                    nextGridy = roverGridy + 1;
+                    direction = 's';
+                }
+                */
             }
         }
 
@@ -414,7 +475,7 @@ void Game::moveRover()
             rover.gridPosition(moveX, moveY);
             grid[moveX][moveY].resetColor();
             //centers the view on the rover
-            //view.setCenter(sf::Vector2f(currentX, currentY));
+            view.setCenter(sf::Vector2f(currentX ,currentY + 100));
         }
 
     }

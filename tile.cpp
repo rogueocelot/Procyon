@@ -30,6 +30,7 @@ void Tile::initTile(int x, int y, int height)
     this->y = y;
 
     obstruct = false;
+    rocks = false;
 
 
 };
@@ -47,4 +48,30 @@ void Tile::resetColor()
 void Tile::initTexture(sf::Texture &texture)
 {
     diamond.setTexture(&texture);
+};
+
+void Tile::setRandom(sf::Texture &organic, sf::Texture &rockTexture)
+{
+    int random = rand() % 25 - 1;
+    //one in every 10 blocks will have organic materials
+    if(random == 2)
+    {
+        diamond.setTexture(&organic);
+    }
+
+    //one in every 5 will be rocks
+    else if(random == 3 || random == 4)
+    {
+        rocks = true;
+        obstruct = true;
+        
+        //initializes rocks on the middle of the tile
+        int rockx = x - (50 / 2);
+        int rocky = (y + (getHeight()/3)) - (50);
+
+        rockShape.setSize(sf::Vector2f(50,50));
+        rockShape.setPosition(rockx, rocky);
+        rockShape.setTexture(&rockTexture);
+    }
+
 };

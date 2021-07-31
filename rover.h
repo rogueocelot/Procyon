@@ -26,7 +26,7 @@ class Rover
         void rectPosition(int x, int y);
         void gridPosition(int x, int y);
 
-        void setTexture(sf::Texture &texture, char direction);
+        void setText(sf::Texture &texture, char direction);
 
     private:
         sf::RectangleShape rect;

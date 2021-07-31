@@ -49,7 +49,7 @@ void Rover::gridPosition(int x, int y)
     gridY = y;
 };
 
-void Rover::setTexture(sf::Texture &texture, char direction)
+void Rover::setText(sf::Texture &texture, char direction)
 {
     rect.setTexture(&texture);
 

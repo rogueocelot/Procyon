@@ -51,6 +51,9 @@ class Game
         int mouseDelta;
         float zoom;
         int roverSize;
+        //tracks if window is focused
+        bool focus;
+        int terrainSize;
 
         //movement variables
         bool move;
@@ -66,8 +69,14 @@ class Game
         sf::ConvexShape boundsRect;
         vector<vector<Tile>> grid;
         Rover rover;
+        //stores coords for rocks
+        sf::VertexArray rocks;
+
+        //textures
         sf::Texture tileTexture;
         sf::Texture roverTexture;
+        sf::Texture organicTexture;
+        sf::Texture rockTexture;
 
         //mouse position
         sf::Vector2i mouseWindow;
