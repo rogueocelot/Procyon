@@ -24,6 +24,7 @@ class Tile
         int getY(){return y;}
         bool getRocks(){return rocks;}
         bool getChecked(){return checked;}
+        bool getDiggable(){return diggable;}
 
         void initTile(int x, int y, int height);
         void initTexture(sf::Texture &texture);
@@ -32,6 +33,7 @@ class Tile
 
         void setObstruct(bool val){obstruct = val;}
         void setChecked(bool userCheck){checked = userCheck;}
+        void setDiggable(bool userDig){diggable = userDig;}
 
         void editColor();
         void resetColor();
@@ -48,7 +50,7 @@ class Tile
         bool visObstruct;
         bool rocks;
         bool checked;
-
+        bool diggable;
 };
 
 #endif

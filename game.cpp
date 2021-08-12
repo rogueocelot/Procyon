@@ -7,6 +7,7 @@ Game::Game()
     initWindow();
     initGrid();
     initRover();
+    initText();
 };
 
 Game::~Game()
@@ -26,6 +27,12 @@ void Game::update()
     updateRover();
     moveRover();
 
+    if(digging)
+    {
+        Dig();
+        digging = false;
+    }
+
 };
 
 
@@ -41,6 +48,8 @@ void Game::render()
     //draw game here
     renderGrid();
     renderRover();
+    renderDig();
+    renderText();
 
     //display game
     window->display();
@@ -63,6 +72,13 @@ void Game::pollEvents()
             case sf::Event::LostFocus:
                 focus = false;
                 break;
+
+            case sf::Event::KeyPressed:
+                if(event.key.code == sf::Keyboard::Space)
+                {
+                    digging = true;
+                    break;
+                }
             /*
             case sf::Event::KeyPressed:
                 if(event.key.code == sf::Keyboard::Escape)
@@ -182,6 +198,42 @@ void Game::renderRover()
     window->draw(rover.getRect());
 }
 
+void Game::renderDig()
+{
+    if(displayDig)
+    {
+        digCounter++;
+        displayDig = false;
+    }
+    if(digCounter > 0)
+    {
+        scienceRect.setPosition(rover.getCurrentX(), rover.getCurrentY() - digCounter);
+        window->draw(scienceRect);
+        digCounter++;
+
+        if(digCounter > 25)
+        {
+            digCounter = 0;
+        }
+    }
+};
+
+void Game::renderText()
+{
+    dispScience = "Science: ";
+    stringstream strs;
+    strs << science;
+    dispScience = dispScience + strs.str();
+    text.setPosition(0.f, 0.f);
+
+    window->setView(UI);
+
+    text.setString(dispScience);
+    window->draw(text);
+
+    window->setView(view);
+};
+
 //private
 
 void Game::initVariables()
@@ -197,6 +249,14 @@ void Game::initVariables()
     ordering = true;
     searching = true;
 
+
+    digging = false;
+    displayDig = false;
+    digSize.x = 20;
+    digSize.y = 20;
+    science = 0;
+    digCounter = 0;
+
     move = false;
     moveX = 0;
     moveY = 0;
@@ -209,6 +269,9 @@ void Game::initVariables()
     roverTexture.loadFromFile("textures/rover.png");
     organicTexture.loadFromFile("textures/organic.png");
     rockTexture.loadFromFile("textures/marsRocks2.png");
+    researchTexture.loadFromFile("textures/research.png");
+
+    font.loadFromFile("assets/plex.ttf");
 
 };
 
@@ -228,6 +291,10 @@ void Game::initWindow()
     window->setView(view);
 
     window->setFramerateLimit(60);
+
+    UI.setCenter(sf::Vector2f(videoMode.width / 2, videoMode.height/2));
+    UI.setSize(sf::Vector2f(videoMode.width, videoMode.height));
+    
 };
 
 void Game::initGrid()
@@ -291,7 +358,15 @@ void Game::initRover()
     rover.setText(roverTexture, direction);
 };
 
+void Game::initText()
+{
+    text.setFont(font);
+    text.setCharacterSize(25);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(0.f, 0.f);
 
+    dispScience = "Science: ";
+};
 
 void Game::moveRover()
 {
@@ -460,4 +535,20 @@ void Game::moveRover()
 
     }
 
+};
+
+void Game::Dig()
+{
+    if(grid[rover.getGridX()][rover.getGridY()].getDiggable())
+    {
+        scienceRect.setPosition(rover.getCurrentX(), rover.getCurrentY());
+        scienceRect.setSize(digSize);
+        scienceRect.setFillColor(sf::Color(100, 75, 178));
+        scienceRect.setTexture(&researchTexture);
+
+        displayDig = true;
+        science++;
+        grid[rover.getGridX()][rover.getGridY()].setDiggable(false);
+        grid[rover.getGridX()][rover.getGridY()].initTexture(tileTexture);
+    }
 };

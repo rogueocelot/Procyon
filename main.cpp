@@ -19,8 +19,10 @@ int main()
     }
     //TODO
     //windows resizing
-    //pathfinding
-    //digging
+    //not diplaying every tile
+    //only display some tiles
+    //add status
+    //add hazards
     //some kind of state system
     //UI
 

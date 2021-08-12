@@ -33,6 +33,7 @@ void Tile::initTile(int x, int y, int height)
     obstruct = false;
     rocks = false;
     checked = false;
+    diggable = false;
 
 };
 
@@ -58,6 +59,7 @@ void Tile::setRandom(sf::Texture &organic, sf::Texture &rockTexture)
     if(random == 2)
     {
         diamond.setTexture(&organic);
+        diggable = true;
     }
 
     //one in every 5 will be rocks
