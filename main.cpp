@@ -25,6 +25,9 @@ int main()
     //add hazards
     //some kind of state system
     //UI
+    //esc menu
+    //main menu
+    //save/loads
 
 
     return 0;
