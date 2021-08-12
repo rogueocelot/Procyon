@@ -193,11 +193,13 @@ void Game::initVariables()
     zoom = 1.0;
     roverSize = 50;
     terrainSize = 50;
+    tileNum = 50;
+    ordering = true;
+    searching = true;
 
     move = false;
     moveX = 0;
     moveY = 0;
-    skip = false;
     direction = 'n';
 
     int nextX = 0;
@@ -236,8 +238,6 @@ void Game::initGrid()
     int startx = 405;
     int starty = 100;
     int height = 100;
-
-    int tileNum = 50;
 
     int x;
     int y;
@@ -313,132 +313,89 @@ void Game::moveRover()
         //end destination
         int roverX = grid[moveX].at(moveY).getX() - (roverSize / 2);
         int roverY = (grid[moveX].at(moveY).getY() + (grid[moveX].at(moveY).getHeight()/3)) - (roverSize);
-        
-        //next destination
-        //moves in 1 tile increments
-        if (moveX != roverGridx && skip == false)
+
+        //containers for pathfinding
+
+        tempMove.x = roverGridx;
+        tempMove.y = roverGridy;
+        tempMove.prev = 777000;
+
+        checking.push(tempMove);
+
+        while(searching)
         {
-            if(moveX < roverGridx && !grid[roverGridx - 1][roverGridy].getObstruct())
+            if(moveX == checking.front().x && moveY == checking.front().y)
             {
-                nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
-                nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                nextGridx = roverGridx - 1;
-                direction = 'w';
+                searching = false;
             }
-
-            else if(moveX > roverGridx && !grid[roverGridx + 1][roverGridy].getObstruct())
+            if(checking.front().x - 1 >= 0 && !grid[checking.front().x - 1][checking.front().y].getObstruct() && !grid[checking.front().x - 1][checking.front().y].getChecked())
             {
-                nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
-                nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                nextGridx = roverGridx + 1;
-                direction = 'e';
+                tempMove.x = checking.front().x - 1;
+                tempMove.y = checking.front().y;
+                tempMove.prev = checked.size();
+                checking.push(tempMove);
             }
-
-            //force the rover to change y if x is blocked
-            else{
-                if(!grid[roverGridx][roverGridy - 1].getObstruct())
-                {
-                    nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridy = roverGridy - 1;
-                    direction = 'n';
-                }
-                else if(!grid[roverGridx][roverGridy + 1].getObstruct())
-                {
-                    nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridy = roverGridy + 1;
-                    direction = 's';
-                }
-                /*
-                //force it to back up if this doesnt work
-                else if(!grid[roverGridx - 1][roverGridy].getObstruct())
-                {
-                    nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridx = roverGridx - 1;
-                    direction = 'w';
-                }
-
-                else if(!grid[roverGridx + 1][roverGridy].getObstruct())
-                {
-                    nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridx = roverGridx + 1;
-                    direction = 'e';
-                }
-                */
+            if(checking.front().x + 1 < tileNum && !grid[checking.front().x + 1][checking.front().y].getObstruct() && !grid[checking.front().x + 1][checking.front().y].getChecked())
+            {
+                tempMove.x = checking.front().x + 1;
+                tempMove.y = checking.front().y;
+                tempMove.prev = checked.size();
+                checking.push(tempMove);
             }
+            if(checking.front().y - 1 >= 0 && !grid[checking.front().x][checking.front().y - 1].getObstruct() && !grid[checking.front().x][checking.front().y - 1].getChecked())
+            {
+                tempMove.x = checking.front().x;
+                tempMove.y = checking.front().y - 1;
+                tempMove.prev = checked.size();
+                checking.push(tempMove);
+            }
+            if(checking.front().y + 1 < tileNum && !grid[checking.front().x][checking.front().y + 1].getObstruct() && !grid[checking.front().x][checking.front().y + 1].getChecked())
+            {
+                tempMove.x = checking.front().x;
+                tempMove.y = checking.front().y + 1;
+                tempMove.prev = checked.size();
+                checking.push(tempMove);
+            }
+            checked.push_back(checking.front());
+            //for testing
+            //grid[checking.front().x][checking.front().y].editColor();
+            grid[checking.front().x][checking.front().y].setChecked(true);
+            checking.pop();
         }
 
-        else if (moveY != roverGridy)
+        if (ordering)
         {
-            if(moveY < roverGridy && !grid[roverGridx][roverGridy - 1].getObstruct())
-            {
-                nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
-                nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                nextGridy = roverGridy - 1;
-                direction = 'n';
-            }
-            else if(moveY > roverGridy && !grid[roverGridx][roverGridy + 1].getObstruct())
-            {
-                nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
-                nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                nextGridy = roverGridy + 1;
-                direction = 's';
-            }
-
-            //force rover to change x if y is blocked
-            //have to use skip to skip the x checking until correct y
-            else{
-                if(!grid[roverGridx - 1][roverGridy].getObstruct())
-                {
-                    nextX = grid[roverGridx - 1][roverGridy].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx - 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridx = roverGridx - 1;
-                    skip = true;
-                    direction = 'w';
-                }
-                else if(!grid[roverGridx + 1][roverGridy].getObstruct())
-                {
-                    nextX = grid[roverGridx + 1][roverGridy].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx + 1][roverGridy].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridx = roverGridx + 1;
-                    skip = true;
-                    direction = 'e';
-                }
-                /*
-                //force it to back up
-                if(!grid[roverGridx][roverGridy - 1].getObstruct())
-                {
-                    nextX = grid[roverGridx][roverGridy - 1].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx][roverGridy - 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridy = roverGridy - 1;
-                    direction = 'n';
-                }
-                else if(!grid[roverGridx][roverGridy + 1].getObstruct())
-                {
-                    nextX = grid[roverGridx][roverGridy + 1].getX() - (roverSize / 2);
-                    nextY = (grid[roverGridx][roverGridy + 1].getY() + (grid[roverGridx][roverGridy].getHeight()/3)) - (roverSize);
-                    nextGridy = roverGridy + 1;
-                    direction = 's';
-                }
-                */
-            }
+            path.push_back(checked.back());
         }
 
-        //can check x again
-        else if(moveY == roverGridy)
+        while(ordering)
         {
-            skip = false;
+            tempMove = path.front();
+            path.push_front(checked.at(tempMove.prev));
+            if(path.front().prev == 777000)
+            {
+                ordering = false;
+            }
+            //cout << tempMove.x << " " << tempMove.y << " " << tempMove.prev << endl;
         }
 
+        nextX = grid[path.front().x][path.front().y].getX() - (roverSize / 2);
+        nextY = (grid[path.front().x][path.front().y].getY() + (grid[path.front().x][path.front().y].getHeight()/3)) - (roverSize);
+        nextGridx = path.front().x;
+        nextGridy = path.front().y;
+        //grid[nextGridx][nextGridy].editColor();
+
+        //set rover sprite direction
+        if(nextX < currentX && nextY < currentY){direction = 'w';}
+        else if(nextX < currentX && nextY > currentY){direction = 's';}
+        else if(nextX > currentX && nextY < currentY){direction = 'n';}
+        else if(nextX > currentX && nextY > currentY){direction = 'e';}
 
         //movement
         if(nextX < currentX)
         {
             currentX -= 2;
-            rover.rectPosition(currentX, currentY - 200);
+            rover.rectPosition(currentX, currentY/* - 200*/);
         }
 
         if(nextY < currentY)
@@ -464,6 +421,8 @@ void Game::moveRover()
         {
             //set what grid square its on
             rover.gridPosition(nextGridx, nextGridy);
+            path.pop_front();
+
         }
 
         //after it reaches destination
@@ -471,11 +430,32 @@ void Game::moveRover()
         {
             //stop moving
             move = false;
+            ordering = true;
+            searching = true;
             //set what grid square its on
             rover.gridPosition(moveX, moveY);
             grid[moveX][moveY].resetColor();
             //centers the view on the rover
             view.setCenter(sf::Vector2f(currentX ,currentY + 100));
+
+            //clear containers
+            list<Move>().swap(path);
+            //path.clear();
+            vector<Move>().swap(checked);
+            queue<Move>().swap(checking);
+            //checked.clear();
+            /*while(!checking.empty())
+            {
+                checking.pop();
+            }*/
+            for (int idx = 0; idx < grid.size(); idx++)
+            {
+                for (int jdx = 0; jdx < grid[idx].size(); jdx++)
+                {
+                    grid[idx][jdx].setChecked(false);
+                }
+            }
+
         }
 
     }

@@ -23,6 +23,7 @@ class Tile
         int getX(){return x;}
         int getY(){return y;}
         bool getRocks(){return rocks;}
+        bool getChecked(){return checked;}
 
         void initTile(int x, int y, int height);
         void initTexture(sf::Texture &texture);
@@ -30,6 +31,7 @@ class Tile
         void setRandom(sf::Texture &organic, sf::Texture &rockTexture);
 
         void setObstruct(bool val){obstruct = val;}
+        void setChecked(bool userCheck){checked = userCheck;}
 
         void editColor();
         void resetColor();
@@ -45,6 +47,7 @@ class Tile
         bool obstruct;
         bool visObstruct;
         bool rocks;
+        bool checked;
 
 };
 

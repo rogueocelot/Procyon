@@ -12,6 +12,7 @@ Tile::Tile(int x, int y, int height)
     this->x = x;
     this->y = y;
     obstruct = false;
+    checked = false;
 };
 
 void Tile::initTile(int x, int y, int height)
@@ -31,7 +32,7 @@ void Tile::initTile(int x, int y, int height)
 
     obstruct = false;
     rocks = false;
-
+    checked = false;
 
 };
 

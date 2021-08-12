@@ -17,6 +17,12 @@ int main()
         //render
         game.render();
     }
+    //TODO
+    //windows resizing
+    //pathfinding
+    //digging
+    //some kind of state system
+    //UI
 
 
     return 0;

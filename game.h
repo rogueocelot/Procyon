@@ -8,6 +8,8 @@
 #include <vector>
 #include <ctime>
 #include <iostream>
+#include <queue>
+#include <list>
 
 #include "tile.h"
 #include "rover.h"
@@ -51,6 +53,7 @@ class Game
         int mouseDelta;
         float zoom;
         int roverSize;
+        int tileNum;
         //tracks if window is focused
         bool focus;
         int terrainSize;
@@ -61,16 +64,29 @@ class Game
         int moveY;
         int nextX;
         int nextY;
-        bool skip;
         char direction;
+        bool ordering;
+        bool searching;
 
+        struct Move{
+            int x;
+            int y;
+            //Move *prev;
+            int prev;
+        };
+
+
+        queue<Move> checking;
+        vector<Move> checked;
+        list<Move> path;
+        Move tempMove;
 
         //game objects
         sf::ConvexShape boundsRect;
         vector<vector<Tile>> grid;
         Rover rover;
         //stores coords for rocks
-        sf::VertexArray rocks;
+        //sf::VertexArray rocks;
 
         //textures
         sf::Texture tileTexture;
