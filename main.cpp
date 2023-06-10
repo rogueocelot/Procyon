@@ -17,9 +17,9 @@ int main()
         //render
         game.render();
     }
+    
     //TODO
     //windows resizing
-    //not diplaying every tile
     //only display some tiles
     //add status
     //add hazards
